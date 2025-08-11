@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Net Worth — Forecast (Responsive Tabs)</title>
+<title>Net Worth — Forecast (Simple & Real-world)</title>
 <style>
-  :root {
-    --bg:#ffffff; --ink:#111827; --ink-2:#374151; --ink-3:#6b7280;
+  :root{
+    --bg:#fff; --ink:#111827; --ink-2:#374151; --ink-3:#6b7280;
     --panel:#f9fafb; --border:#e5e7eb; --grid:#f3f4f6;
     --carry:#c7d2fe;    /* indigo-200 */
     --contrib:#93c5fd;  /* blue-300 */
@@ -19,478 +19,45 @@
   *{box-sizing:border-box}
   body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--ink)}
   .container{max-width:1400px;margin:0 auto;padding:16px}
-  h1{margin:4px 0 8px;font-size:22px;font-weight:700}
-  .sub{margin:0 0 10px;color:var(--ink-3);font-size:13px}
+  h1{margin:4px 0 8px;font-size:24px;font-weight:700}
+  .sub{margin:0 0 8px;color:var(--ink-3);font-size:13px}
 
   /* Tabs */
   .tabs{display:flex;gap:8px;margin:8px 0 12px;flex-wrap:wrap}
-  .tab{padding:8px 12px;border:1px solid var(--border);border-radius:999px;background:white;font-size:13px;color:var(--ink-2);cursor:pointer}
-  .tab.active{background:var(--brand);color:white;border-color:var(--brand)}
+  .tab{padding:8px 12px;border:1px solid var(--border);border-radius:999px;background:#fff;font-size:13px;color:var(--ink-2);cursor:pointer}
+  .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
 
-  /* Layout */
+  /* Layout: sidebar + chart (desktop) ; single column (mobile) */
   .layout{display:grid;grid-template-columns:minmax(320px,30vw) 1fr;gap:16px;align-items:start}
-  @media (max-width: 980px){ .layout{grid-template-columns:1fr} }
+  .sidebar{position:sticky;top:12px}
+  @media (max-width:980px){
+    .layout{grid-template-columns:1fr}
+    .sidebar{position:static}
+  }
 
   .panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:12px}
-  .panel h2{margin:0 0 8px;font-size:12px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em}
-  label{display:block}
-  label>span{display:block;margin:0 0 4px;color:var(--ink-3);font-size:12px}
-  .row{display:flex;gap:8px;align-items:center}
-  input[type="number"],select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px}
-  input[type="number"]:focus,select:focus{outline:none;border-color:#a5b4fc;box-shadow:0 0 0 3px rgba(99,102,241,.18)}
-  .suffix{font-size:12px;color:var(--ink-3)}
-  .actual{font-size:11px;color:var(--ink-3);margin:2px 0 6px}
-  .check{display:flex;align-items:center;gap:8px}
+  .panel + .panel{margin-top:12px}
+  .panel h2{margin:0 0 8px;font-size:13px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em}
 
-  /* Collapsible controls on small screens */
-  .mobile-only{display:none}
-  @media (max-width: 980px){ .mobile-only{display:block} }
-  details.controls{border-radius:16px;border:1px solid var(--border);background:var(--panel);overflow:hidden}
-  details.controls>summary{cursor:pointer;list-style:none;padding:12px;font-weight:600}
-  details.controls[open]>summary{border-bottom:1px solid var(--border)}
-  details.controls .content{padding:12px}
+  label{display:block}
+  label>span{display:block;margin-bottom:4px;font-size:12px;color:var(--ink-3)}
+  .row{display:flex;gap:8px;align-items:center}
+  input[type="number"],select{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;font-size:14px;color:var(--ink);background:#fff;outline:none}
+  input[type="number"]:focus,select:focus{border-color:#a5b4fc;box-shadow:0 0 0 3px rgba(99,102,241,.2)}
+  .suffix{font-size:12px;color:var(--ink-3)}
+  .actual{font-size:11px;color:var(--ink-3);margin:2px 0 8px}
+  .check{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink-2)}
 
   /* Chart */
-  .chart-wrap{position:relative;border:1px solid var(--border);border-radius:16px;background:#fff;min-height:320px}
-  #chart{width:100%;height:78vh;display:block}
-  @media (max-width: 980px){ #chart{height:72vh} }
-  .legend{display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-size:12px;color:var(--ink-2);padding:8px 10px}
+  .chart-wrap{height:85vh;border:1px solid var(--border);border-radius:16px;padding:8px;position:relative}
+  @media (max-width:980px){ .chart-wrap{height:68vh} }
+  #chart{width:100%;height:100%;display:block}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;align-items:center;font-size:12px;color:var(--ink-2);margin-top:6px}
   .chip{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:6px}
-  .tooltip{position:absolute;pointer-events:none;background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--ink-2);box-shadow:0 6px 24px rgba(0,0,0,.06);min-width:240px}
+  .tooltip{position:absolute;pointer-events:none;background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--ink-2);box-shadow:0 6px 24px rgba(0,0,0,.06);min-width:230px}
   .xlab{font-size:11px;fill:#6b7280}
   .muted{color:var(--ink-3)}
-</style>
-</head>
-<body>
-  <div class="container">
-    <h1>Net Worth — Forecast</h1>
-    <p class="sub">Switch between <strong>Simple Forecast</strong> (steady assumptions) and <strong>Real‑world Forecast</strong> (year‑to‑year ranges & Black Swan shocks). Bars per <strong>year</strong> = Carry‑forward + Contributions (incl. windfall) + Interest − Withdrawals. Inputs are in <strong>lakh units</strong> (1 = ₹1,00,000).</p>
 
-    <div class="tabs">
-      <button id="tab-simple" class="tab active">Simple Forecast</button>
-      <button id="tab-real" class="tab">Real‑world Forecast</button>
-    </div>
-
-    <!-- Mobile collapsible controls -->
-    <div class="mobile-only">
-      <details class="controls" id="mobile-controls">
-        <summary>Adjust inputs</summary>
-        <div class="content"><div id="controls-mobile"></div></div>
-      </details>
-    </div>
-
-    <div class="layout">
-      <!-- Sidebar controls (always rendered; hidden by details on mobile) -->
-      <div>
-        <div class="panel" id="panel-basics"><h2>Basics</h2><div id="basics"></div></div>
-        <div class="panel" id="panel-income"><h2>Retirement & Income</h2><div id="income"></div></div>
-        <div class="panel" id="panel-windfall"><h2>Windfall</h2><div id="windfall"></div></div>
-        <div class="panel" id="panel-realworld" style="display:none"><h2>Real‑world Ranges</h2><div id="realworld"></div></div>
-        <div class="panel" id="panel-blackswan" style="display:none">
-          <h2>Black Swan Events</h2>
-          <div id="bs-list"></div>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button id="add-bs" class="tab" style="padding:6px 10px">Add event</button>
-            <button id="clear-bs" class="tab" style="padding:6px 10px">Clear all</button>
-          </div>
-        </div>
-        <div class="panel" id="panel-advanced"><h2>Advanced</h2><div id="advanced"></div></div>
-      </div>
-
-      <!-- Chart -->
-      <div>
-        <div class="chart-wrap">
-          <svg id="chart" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-label="Stacked bars"></svg>
-          <div id="tooltip" class="tooltip" style="display:none"></div>
-          <div class="legend">
-            <span><i class="chip" style="background:var(--carry)"></i>Carry-forward</span>
-            <span><i class="chip" style="background:var(--contrib)"></i>Contribution (incl. windfall)</span>
-            <span><i class="chip" style="background:var(--interest)"></i>Interest (this year)</span>
-            <span><i class="chip" style="background:var(--withdraw)"></i>Withdrawals (this year)</span>
-            <span class="muted">Markers: Contrib end (<span style="color:var(--brand)">indigo</span>), Retirement (<span style="color:var(--ret)">red</span>), Life expectancy (<span style="color:var(--marker)">slate</span>)</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-<script>
-(function(){
-  const SCALE = 100000; // 1 == ₹1,00,000
-  const now = new Date();
-  const defaultYear = now.getFullYear();
-
-  // App state (with your requested defaults)
-  const state = {
-    mode: 'simple', // 'simple' | 'real'
-    // Basics
-    baseYear: defaultYear,
-    currentNetWorth: 50,     // ₹50L
-    currentAge: 35,
-    monthlyContribution: 1,  // ₹1L/mo
-    contributeUntilAge: 45,
-    inflation: 7,            // % p.a.
-    expectedROI: 11.5,       // % p.a.
-    lifeExpectancy: 85,
-    contribTiming: 'end',
-    // Income / withdrawals
-    retirementAge: 52,
-    monthlyIncome: 1.2,      // ₹1.2L/mo
-    incomeIndexed: true,
-    // Windfall
-    windfallEnabled: false,
-    windfallYear: defaultYear + 5,
-    windfallAmount: 10,      // ₹10L one-time
-    // Real-world ranges
-    inflationMin: 6,
-    inflationMax: 8,
-    roiMin: 9,
-    roiMax: 13,
-    // Black Swans
-    blackSwans: [], // {year, type, infPlus, roiMinus, expPlus}
-    // Safety
-    stopAtZero: true,
-  };
-
-  // Utils
-  const clamp=(v,min,max)=>Math.min(Math.max(v,min),max);
-  const toMonthly=(pct)=> Math.pow(1+Number(pct)/100, 1/12)-1;
-  function formatINRShort(n){ if(!isFinite(n)) return '—'; const s=n<0?'-':''; n=Math.abs(n);
-    if(n>=1e11) return s+'₹'+(n/1e11).toFixed(2)+'k Cr';
-    if(n>=1e7)  return s+'₹'+(n/1e7).toFixed(2)+' Cr';
-    if(n>=1e5)  return s+'₹'+(n/1e5).toFixed(2)+' L';
-    if(n>=1e3)  return s+'₹'+(n/1e3).toFixed(0)+'k';
-    return s+'₹'+(n|0);
-  }
-  const formatINR = (n)=> new Intl.NumberFormat('en-IN',{maximumFractionDigits:0}).format(Math.round(n||0));
-
-  // Deterministic yearly draw between min/max (for Real-world mode)
-  function lcg(seed){ return (seed * 48271 % 2147483647) / 2147483647; }
-  function pickInRange(min,max,seed){ const a=Math.min(min,max), b=Math.max(min,max); return a + lcg(seed)*(b-a); }
-
-  function yearScenario(p, yearAgeFloor, startAgeFloor){
-    const calYear = p.baseYear + (yearAgeFloor - startAgeFloor);
-    let infl = pickInRange(p.inflationMin, p.inflationMax, calYear*101+7);
-    let roi  = pickInRange(p.roiMin, p.roiMax, calYear*131+11);
-    let expMult = 1;
-    const hits = (p.blackSwans||[]).filter(e=> Number(e.year) === calYear);
-    hits.forEach(e=>{ const infPlus=+e.infPlus||0, roiMinus=+e.roiMinus||0, expPlus=+e.expPlus||0; infl+=infPlus; roi-=roiMinus; expMult*=(1+expPlus/100); });
-    return { calYear, inflationPct: infl, roiPct: roi, expenseMult: expMult, hasBlackSwan: hits.length>0 };
-  }
-
-  // Core simulator — monthly compounding, yearly aggregation
-  function simulateYearly(p){
-    const monthsTotal = Math.max(0, Math.round((p.lifeExpectancy - p.currentAge)*12));
-    const startMonths = Math.round(p.currentAge*12);
-    const startAgeFloor = Math.floor(p.currentAge);
-
-    let bal = p.currentNetWorth;
-    let carry = bal, sumContrib=0, sumWithdraw=0, sumWindfall=0, pvWithdrawYear=0;
-    let currentYearAge = Math.floor(p.currentAge);
-    let monthlyW = p.monthlyIncome;
-
-    // Econ settings
-    let inflPct = (p.mode==='simple') ? p.inflation : p.inflationMin;
-    let roiPct  = (p.mode==='simple') ? p.expectedROI : p.roiMin;
-    let expenseMult = 1; let hasBSYear=false;
-    if (p.mode==='real') { const sc = yearScenario(p,currentYearAge,startAgeFloor); inflPct=sc.inflationPct; roiPct=sc.roiPct; expenseMult=sc.expenseMult; hasBSYear=sc.hasBlackSwan; }
-
-    let iM = toMonthly(inflPct), rM = toMonthly(roiPct);
-    let cumInflationFactor = 1; // for PV of withdrawals
-
-    const calYear = (yearAgeFloor)=> p.baseYear + (yearAgeFloor - startAgeFloor);
-    const years=[]; // {yearAge, year, carry, contrib, windfall, withdraw, interest, end, pvWithdraw, isBS}
-
-    for(let m=0;m<=monthsTotal;m++){
-      const ageMonths = startMonths + m;
-      const ageYears  = ageMonths/12;
-      const yearAgeFloor = Math.floor(ageYears);
-
-      const isNewYear = (m===0) || (yearAgeFloor!==currentYearAge);
-      if (isNewYear){
-        if (m!==0){
-          const endPrev = bal;
-          const interestPrev = endPrev - carry - (sumContrib + sumWindfall) + sumWithdraw; // end = carry + contrib + windfall + interest - withdraw
-          years.push({ yearAge: currentYearAge+1, year: calYear(currentYearAge)+1, carry, contrib: sumContrib+sumWindfall, windfall: sumWindfall, withdraw: sumWithdraw, interest: interestPrev, end: endPrev, pvWithdraw: pvWithdrawYear, isBS: hasBSYear });
-          currentYearAge = yearAgeFloor; carry = bal; sumContrib=0; sumWithdraw=0; sumWindfall=0; pvWithdrawYear=0;
-          if (p.incomeIndexed && currentYearAge >= Math.floor(p.retirementAge)) { monthlyW *= (1 + ((p.mode==='real')? inflPct : p.inflation)/100); }
-          if (p.mode==='real') { const sc = yearScenario(p,currentYearAge,startAgeFloor); inflPct=sc.inflationPct; roiPct=sc.roiPct; expenseMult=sc.expenseMult; hasBSYear=sc.hasBlackSwan; iM=toMonthly(inflPct); rM=toMonthly(roiPct); }
-        }
-        if (p.windfallEnabled && calYear(currentYearAge) === p.windfallYear) { bal += p.windfallAmount; sumWindfall += p.windfallAmount; }
-      }
-
-      // Contributions
-      const inContrib = ageYears < p.contributeUntilAge && ageYears < p.retirementAge;
-      if (inContrib && p.contribTiming==='start'){ bal += p.monthlyContribution; sumContrib += p.monthlyContribution; }
-
-      // Withdrawals (start from retirement age)
-      const inRetire = ageYears >= p.retirementAge;
-      if (inRetire){ const thisW = monthlyW * ((p.mode==='real')? expenseMult : 1); bal -= thisW; sumWithdraw += thisW; pvWithdrawYear += thisW / cumInflationFactor; if (p.stopAtZero && bal<0) bal=0; }
-
-      // Growth
-      bal *= (1 + rM);
-
-      // End-of-month contribution
-      if (inContrib && p.contribTiming==='end'){ bal += p.monthlyContribution; sumContrib += p.monthlyContribution; }
-      if (p.stopAtZero && bal<0) bal=0;
-
-      cumInflationFactor *= (1 + iM);
-    }
-
-    const end = bal; const interest = end - carry - (sumContrib + sumWindfall) + sumWithdraw;
-    years.push({ yearAge: currentYearAge+1, year: calYear(currentYearAge)+1, carry, contrib: sumContrib+sumWindfall, windfall: sumWindfall, withdraw: sumWithdraw, interest, end, pvWithdraw: pvWithdrawYear, isBS: hasBSYear });
-    return years;
-  }
-
-  // Controls builders
-  function makeNumber(parent,key,label,step,suffix,showActual=false){
-    const wrap=document.createElement('label');
-    const s=document.createElement('span'); s.textContent=label; wrap.appendChild(s);
-    const row=document.createElement('div'); row.className='row';
-    const inp=document.createElement('input'); inp.type='number'; inp.step=String(step); inp.value=state[key]; inp.addEventListener('input',()=>{ state[key]=Number(inp.value); syncMobile(); update(); }); row.appendChild(inp);
-    if (suffix){ const t=document.createElement('div'); t.className='suffix'; t.textContent=suffix; row.appendChild(t); }
-    wrap.appendChild(row);
-    if (showActual){ const a=document.createElement('div'); a.className='actual'; a.dataset.key=key; wrap.appendChild(a); }
-    parent.appendChild(wrap);
-  }
-  function makeSelect(parent,key,label,opts){
-    const wrap=document.createElement('label'); const s=document.createElement('span'); s.textContent=label; wrap.appendChild(s);
-    const sel=document.createElement('select'); opts.forEach(o=>{const op=document.createElement('option'); op.value=o.value; op.textContent=o.label; sel.appendChild(op);}); sel.value=state[key];
-    sel.addEventListener('change',()=>{ state[key]=sel.value; syncMobile(); update(); }); wrap.appendChild(sel); parent.appendChild(wrap);
-  }
-  function makeCheck(parent,key,label){
-    const wrap=document.createElement('label'); wrap.className='check';
-    const inp=document.createElement('input'); inp.type='checkbox'; inp.checked=state[key]; inp.addEventListener('change',()=>{ state[key]=inp.checked; syncMobile(); update(); });
-    const txt=document.createElement('div'); txt.textContent=label; wrap.appendChild(inp); wrap.appendChild(txt); parent.appendChild(wrap);
-  }
-
-  // Black Swan UI
-  const BS_DEFAULTS = {
-    Recession: { infPlus:3, roiMinus:6, expPlus:10 },
-    War:       { infPlus:5, roiMinus:10, expPlus:20 },
-    Pandemic:  { infPlus:4, roiMinus:8,  expPlus:15 },
-    Custom:    { infPlus:0, roiMinus:0,  expPlus:0 },
-  };
-  function renderBlackSwans(){
-    const host = document.getElementById('bs-list'); host.innerHTML='';
-    if (!state.blackSwans.length){ const hint=document.createElement('div'); hint.className='muted'; hint.textContent='No events yet. Add a recession, war, or pandemic year.'; host.appendChild(hint); }
-    state.blackSwans.forEach((e,idx)=>{
-      const row = document.createElement('div'); row.style.display='grid'; row.style.gridTemplateColumns='1fr 1fr 1fr 1fr 1fr auto'; row.style.gap='8px'; row.style.alignItems='center'; row.style.marginBottom='8px';
-      // Year
-      const yearWrap=document.createElement('label'); const ys=document.createElement('span'); ys.textContent='Year'; yearWrap.appendChild(ys);
-      const yi=document.createElement('input'); yi.type='number'; yi.value=e.year; yi.addEventListener('input',()=>{ e.year = Number(yi.value); update(); }); yearWrap.appendChild(yi); row.appendChild(yearWrap);
-      // Type
-      const typeWrap=document.createElement('label'); const ts=document.createElement('span'); ts.textContent='Type'; typeWrap.appendChild(ts);
-      const sel=document.createElement('select'); ['Recession','War','Pandemic','Custom'].forEach(t=>{ const op=document.createElement('option'); op.value=t; op.textContent=t; sel.appendChild(op); }); sel.value=e.type||'Custom';
-      sel.addEventListener('change',()=>{ e.type = sel.value; const d=BS_DEFAULTS[e.type]; if (d){ e.infPlus=d.infPlus; e.roiMinus=d.roiMinus; e.expPlus=d.expPlus; renderBlackSwans(); update(); }});
-      typeWrap.appendChild(sel); row.appendChild(typeWrap);
-      // Inflation +pp
-      const infWrap=document.createElement('label'); const is=document.createElement('span'); is.textContent='Inflation +pp'; infWrap.appendChild(is);
-      const inf=document.createElement('input'); inf.type='number'; inf.step='0.1'; inf.value=e.infPlus; inf.addEventListener('input',()=>{ e.infPlus=Number(inf.value); update(); }); infWrap.appendChild(inf); row.appendChild(infWrap);
-      // ROI −pp
-      const roiWrap=document.createElement('label'); const rs=document.createElement('span'); rs.textContent='ROI −pp'; roiWrap.appendChild(rs);
-      const roi=document.createElement('input'); roi.type='number'; roi.step='0.1'; roi.value=e.roiMinus; roi.addEventListener('input',()=>{ e.roiMinus=Number(roi.value); update(); }); roiWrap.appendChild(roi); row.appendChild(roiWrap);
-      // Expenses +%
-      const expWrap=document.createElement('label'); const es=document.createElement('span'); es.textContent='Expenses +%'; expWrap.appendChild(es);
-      const exp=document.createElement('input'); exp.type='number'; exp.step='0.1'; exp.value=e.expPlus; exp.addEventListener('input',()=>{ e.expPlus=Number(exp.value); update(); }); expWrap.appendChild(exp); row.appendChild(expWrap);
-      // Remove
-      const rm=document.createElement('button'); rm.className='tab'; rm.style.padding='6px 10px'; rm.textContent='Remove'; rm.addEventListener('click',()=>{ state.blackSwans.splice(idx,1); renderBlackSwans(); update(); }); row.appendChild(rm);
-      host.appendChild(row);
-    });
-  }
-
-  // Render inputs (desktop sidebar)
-  const basics = document.getElementById('basics');
-  const income = document.getElementById('income');
-  const windfall = document.getElementById('windfall');
-  const advanced = document.getElementById('advanced');
-  const realworld = document.getElementById('realworld');
-  function renderBasics(){
-    basics.innerHTML='';
-    makeNumber(basics,'baseYear','Current calendar year',1,'');
-    makeNumber(basics,'currentNetWorth','Current net worth',1,'× ₹1,00,000',true);
-    makeNumber(basics,'currentAge','Current age',1,'');
-    makeNumber(basics,'monthlyContribution','Monthly contribution',0.1,'× ₹1,00,000',true);
-    makeNumber(basics,'contributeUntilAge','Contribute until age',1,'');
-    if (state.mode==='simple'){ makeNumber(basics,'inflation','Inflation',0.1,'% p.a.'); makeNumber(basics,'expectedROI','Expected ROI',0.1,'% p.a.'); }
-    makeNumber(basics,'lifeExpectancy','Life expectancy',1,'');
-    makeSelect(basics,'contribTiming','Contribution timing',[{value:'start',label:'Start of month'},{value:'end',label:'End of month (default)'}]);
-  }
-  function renderIncome(){
-    income.innerHTML='';
-    makeNumber(income,'retirementAge','Retirement age',1,'');
-    makeNumber(income,'monthlyIncome','Expected monthly income after retirement',0.1,'× ₹1,00,000',true);
-    makeCheck(income,'incomeIndexed','Increase income every year by inflation?');
-  }
-  function renderWindfall(){
-    windfall.innerHTML='';
-    makeCheck(windfall,'windfallEnabled','Enable windfall');
-    makeNumber(windfall,'windfallYear','Windfall calendar year',1,'');
-    makeNumber(windfall,'windfallAmount','Windfall amount (one-time)',1,'× ₹1,00,000',true);
-  }
-  function renderAdvanced(){ advanced.innerHTML=''; makeCheck(advanced,'stopAtZero','Stop balance at zero (no negative net worth)'); }
-  function renderRealworld(){
-    realworld.innerHTML='';
-    makeNumber(realworld,'inflationMin','Inflation min',0.1,'% p.a.');
-    makeNumber(realworld,'inflationMax','Inflation max',0.1,'% p.a.');
-    makeNumber(realworld,'roiMin','ROI min',0.1,'% p.a.');
-    makeNumber(realworld,'roiMax','ROI max',0.1,'% p.a.');
-  }
-  renderBasics(); renderIncome(); renderWindfall(); renderAdvanced(); renderRealworld();
-
-  // Mirror a mobile controls copy
-  const controlsMobile = document.getElementById('controls-mobile');
-  function renderMobile(){ controlsMobile.innerHTML='';
-    renderBasics(); renderIncome(); renderWindfall(); renderAdvanced(); renderRealworld(); // ensure latest sidebar rendered
-    // clone nodes from panels to mobile container
-    ['basics','income','windfall','realworld','advanced'].forEach(id=>{
-      const src = document.getElementById(id); const clone = src.cloneNode(true); controlsMobile.appendChild(clone);
-    });
-  }
-  function syncMobile(){ if (window.matchMedia('(max-width: 980px)').matches) renderMobile(); }
-  renderMobile();
-
-  // Black swan buttons
-  document.getElementById('add-bs').addEventListener('click',()=>{ state.blackSwans.push({ year: state.baseYear+1, type:'Recession', ...BS_DEFAULTS.Recession }); renderBlackSwans(); update(); });
-  document.getElementById('clear-bs').addEventListener('click',()=>{ state.blackSwans=[]; renderBlackSwans(); update(); });
-  renderBlackSwans();
-
-  // Tabs switching
-  const tabSimple = document.getElementById('tab-simple');
-  const tabReal   = document.getElementById('tab-real');
-  const panelRealworld = document.getElementById('panel-realworld');
-  const panelBS = document.getElementById('panel-blackswan');
-  function setMode(mode){
-    state.mode=mode; tabSimple.classList.toggle('active',mode==='simple'); tabReal.classList.toggle('active',mode==='real');
-    panelRealworld.style.display = (mode==='real')? '' : 'none';
-    panelBS.style.display        = (mode==='real')? '' : 'none';
-    renderBasics(); renderIncome(); renderWindfall(); renderAdvanced(); renderRealworld(); renderBlackSwans(); syncMobile(); update();
-  }
-  tabSimple.addEventListener('click',()=>setMode('simple'));
-  tabReal  .addEventListener('click',()=>setMode('real'));
-
-  // Chart rendering
-  const svg=document.getElementById('chart'); const tooltip=document.getElementById('tooltip');
-  function render(){
-    // clamps
-    state.currentAge = clamp(state.currentAge,18,99);
-    state.contributeUntilAge = clamp(state.contributeUntilAge, state.currentAge, 100);
-    state.retirementAge = clamp(state.retirementAge, state.currentAge, 100);
-    state.lifeExpectancy = clamp(state.lifeExpectancy, state.retirementAge, 105);
-
-    // show actual values under money fields
-    document.querySelectorAll('.actual').forEach(el=>{ const k=el.dataset.key; const v=(Number(state[k])||0)*SCALE; el.textContent='Actual: ₹'+formatINR(v); });
-
-    const common={
-      mode: state.mode,
-      baseYear: Math.round(state.baseYear),
-      currentNetWorth: (state.currentNetWorth||0)*SCALE,
-      currentAge: state.currentAge,
-      monthlyContribution: (state.monthlyContribution||0)*SCALE,
-      contributeUntilAge: state.contributeUntilAge,
-      lifeExpectancy: state.lifeExpectancy,
-      contribTiming: state.contribTiming,
-      retirementAge: state.retirementAge,
-      monthlyIncome: (state.monthlyIncome||0)*SCALE,
-      incomeIndexed: state.incomeIndexed,
-      stopAtZero: state.stopAtZero,
-      windfallEnabled: state.windfallEnabled,
-      windfallYear: Math.round(state.windfallYear),
-      windfallAmount: (state.windfallAmount||0)*SCALE,
-    };
-    const params = (state.mode==='simple')
-      ? { ...common, inflation: state.inflation, expectedROI: state.expectedROI }
-      : { ...common, inflationMin: state.inflationMin, inflationMax: state.inflationMax, roiMin: state.roiMin, roiMax: state.roiMax, blackSwans: state.blackSwans };
-
-    const years = simulateYearly(params);
-
-    const W = svg.clientWidth||1000, H=svg.clientHeight||600; svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
-    const left=90,right=16,top=16,bottom=48; const plotW=W-left-right, plotH=H-top-bottom;
-
-    const stackTopMax = years.reduce((m,y)=>Math.max(m, y.carry + y.contrib + Math.max(0,y.interest)), 1);
-    const yScale = v=> top + (1 - v/stackTopMax) * plotH;
-
-    const xCount=years.length; const barW = plotW / xCount; // gapless
-
-    let grid='';
-    for(let i=0;i<=5;i++){ const v=(stackTopMax*i)/5; const gy=yScale(v); grid+=`<line x1="${left}" y1="${gy}" x2="${W-right}" y2="${gy}" stroke="${'#f3f4f6'}"/>`;
-      grid+=`<text x="${left-8}" y="${gy+4}" font-size="11" text-anchor="end" fill="#6b7280">${formatINRShort(v)}</text>`; }
-
-    const startAgeFloor = Math.floor(state.currentAge);
-    const yearFor = (yearAge)=> params.baseYear + (yearAge - startAgeFloor);
-
-    const xLabels=new Set(); years.forEach(y=>{ const yr = yearFor(y.yearAge); if(yr%5===0) xLabels.add(yr); }); xLabels.add(yearFor(years[0].yearAge)); xLabels.add(yearFor(years[years.length-1].yearAge));
-
-    let bars=''; const yZero=yScale(0);
-    years.forEach((y,idx)=>{
-      const x = left + idx*barW;
-      const carryTop = yScale(y.carry);
-      const contribTop = yScale(y.carry + y.contrib);
-      const interestTop = yScale(y.carry + y.contrib + y.interest);
-      const endTop = yScale(y.end);
-      bars += `<rect x="${x}" y="${carryTop}"   width="${barW}" height="${yZero-carryTop}" fill="var(--carry)" rx="2"/>`;
-      bars += `<rect x="${x}" y="${contribTop}" width="${barW}" height="${carryTop-contribTop}" fill="var(--contrib)" rx="2"/>`;
-      bars += `<rect x="${x}" y="${interestTop}" width="${barW}" height="${Math.max(0,contribTop-interestTop)}" fill="var(--interest)" rx="2"/>`;
-      bars += `<rect x="${x}" y="${interestTop}" width="${barW}" height="${Math.max(0,endTop-interestTop)}" fill="var(--withdraw)" rx="2" opacity="0.95"/>`;
-      if (y.isBS){ const topY=Math.min(carryTop,contribTop,interestTop,endTop); const h=Math.max(0,yZero-topY); bars += `<rect x="${x}" y="${topY}" width="${barW}" height="${h}" fill="#000" opacity="0.12" rx="2"/>`; }
-    });
-
-    const idxForAge = (age)=> years.findIndex(y=>y.yearAge===age);
-    const cxForIdx = (idx)=> left + idx*barW + barW/2;
-    const ref=[]; const idxContribEnd = idxForAge(Math.round(state.contributeUntilAge)); if(idxContribEnd>=0){ const cx=cxForIdx(idxContribEnd); ref.push(`<line x1="${cx}" y1="${top}" x2="${cx}" y2="${H-bottom}" stroke="${'#6366f1'}" stroke-dasharray="4 4"/>`); ref.push(`<text x="${cx+4}" y="${top+12}" font-size="11" fill="#6366f1">Contrib end</text>`);} const idxRet=idxForAge(Math.round(state.retirementAge)); if(idxRet>=0){ const cx=cxForIdx(idxRet); ref.push(`<line x1="${cx}" y1="${top}" x2="${cx}" y2="${H-bottom}" stroke="${'#ef4444'}" stroke-dasharray="4 4"/>`); ref.push(`<text x="${cx+4}" y="${top+12}" font-size="11" fill="#ef4444">Retirement</text>`);} const idxLife=idxForAge(Math.floor(state.lifeExpectancy)); if(idxLife>=0){ const cx=cxForIdx(idxLife); ref.push(`<line x1="${cx}" y1="${top}" x2="${cx}" y2="${H-bottom}" stroke="${'#64748b'}" stroke-dasharray="4 4"/>`); ref.push(`<text x="${cx+4}" y="${top+12}" font-size="11" fill="#64748b">Life expectancy</text>`);} 
-
-    xLabels.forEach(yr=>{ const idx=years.findIndex(y=>yearFor(y.yearAge)===yr); if(idx>=0){ const cx=cxForIdx(idx); grid+=`<text class="xlab" x="${cx}" y="${H-8}" text-anchor="middle">${yr}</text>`; }});
-
-    svg.innerHTML = `<g class="grid">${grid}</g><g class="bars">${bars}</g><g class="refs">${ref.join('')}</g>`;
-
-    // Hover/touch overlay
-    let hitAll = svg.querySelector('#hit-all'); if(!hitAll){ hitAll=document.createElementNS('http://www.w3.org/2000/svg','rect'); hitAll.setAttribute('id','hit-all'); hitAll.setAttribute('fill','transparent'); svg.appendChild(hitAll); }
-    hitAll.setAttribute('x',left); hitAll.setAttribute('y',top); hitAll.setAttribute('width',plotW); hitAll.setAttribute('height',plotH);
-
-    const bbox = svg.getBoundingClientRect();
-    function showTip(clientX, clientY){
-      const px=clientX-bbox.left, py=clientY-bbox.top; if(px<left||px>W-right||py<top||py>H-bottom){ tooltip.style.display='none'; return; }
-      let idx=Math.floor((px-left)/barW); if(idx<0) idx=0; if(idx>xCount-1) idx=xCount-1; const y=years[idx]; const yr=yearFor(y.yearAge);
-      tooltip.style.display='block'; tooltip.innerHTML = `<div><strong>${yr}</strong> (Age ${y.yearAge})</div>
-        <div>Carry-forward: <strong>${formatINRShort(y.carry)}</strong></div>
-        <div>Contribution (incl. windfall): <strong>${formatINRShort(y.contrib)}</strong>${y.windfall?` <span class='muted'>(incl. windfall ${formatINRShort(y.windfall)})</span>`:''}</div>
-        <div>Interest (this year): <strong>${formatINRShort(y.interest)}</strong></div>
-        <div>Withdrawals (this year): <strong>${formatINRShort(y.withdraw)}</strong></div>
-        <div class="muted">Withdrawals in today's ₹: <strong>${formatINRShort(y.pvWithdraw)}</strong></div>
-        <div class="muted">End of year balance: ${formatINRShort(y.end)}</div>`;
-      let cx=px+12, cy=py-10; const tbb=tooltip.getBoundingClientRect(); if(cx+tbb.width>bbox.width) cx=px-12-tbb.width; if(cy+tbb.height>bbox.height) cy=bbox.height-tbb.height-4; if(cy<0) cy=4; tooltip.style.left=cx+'px'; tooltip.style.top=cy+'px';
-    }
-    hitAll.onmousemove=(ev)=>showTip(ev.clientX,ev.clientY);
-    hitAll.ontouchstart=(ev)=>{ if(ev.touches&&ev.touches[0]) showTip(ev.touches[0].clientX, ev.touches[0].clientY); };
-    hitAll.ontouchmove=(ev)=>{ if(ev.touches&&ev.touches[0]) showTip(ev.touches[0].clientX, ev.touches[0].clientY); };
-    hitAll.onmouseleave=()=>{ tooltip.style.display='none'; };
-    hitAll.ontouchend=()=>{ tooltip.style.display='none'; };
-  }
-
-  function update(){ render(); }
-  render(); window.addEventListener('resize', render);
-
-  // Expand mobile controls by default on small screens
-  if (window.matchMedia('(max-width: 980px)').matches){ const d=document.getElementById('mobile-controls'); if(d) d.open=true; }
-
-  // Self-tests
-  function approx(a,b,tol=1e-6){ return Math.abs(a-b) <= tol*Math.max(1,Math.abs(a),Math.abs(b)); }
-  (function runSelfTests(){
-    try{
-      const p1={ mode:'simple', baseYear:2025, currentNetWorth:0, currentAge:30, lifeExpectancy:31, monthlyContribution:100, contributeUntilAge:40, retirementAge:99, expectedROI:0, inflation:0, contribTiming:'end', monthlyIncome:0, incomeIndexed:false, stopAtZero:true, windfallEnabled:false, windfallYear:2025, windfallAmount:0 };
-      const y1=simulateYearly(p1); console.assert(approx(y1[0].contrib,1200), 'S1 contrib 12*100'); console.assert(approx(y1[0].end,1200), 'S1 end=contrib ROI0');
-      const p2={ mode:'simple', baseYear:2025, currentNetWorth:1200, currentAge:60, lifeExpectancy:61, monthlyContribution:0, contributeUntilAge:40, retirementAge:60, expectedROI:0, inflation:0, contribTiming:'end', monthlyIncome:100, incomeIndexed:false, stopAtZero:true, windfallEnabled:false, windfallYear:2025, windfallAmount:0 };
-      const y2=simulateYearly(p2); console.assert(approx(y2[0].withdraw,1200),'S2 withdraw 12*100'); console.assert(approx(y2[0].end,0),'S2 end zero after withdraw');
-      const p3={ mode:'simple', baseYear:2025, currentNetWorth:0, currentAge:40, lifeExpectancy:41, monthlyContribution:0, contributeUntilAge:0, retirementAge:99, expectedROI:0, inflation:0, contribTiming:'end', monthlyIncome:0, incomeIndexed:false, stopAtZero:true, windfallEnabled:true, windfallYear:2025, windfallAmount:500 };
-      const y3=simulateYearly(p3); console.assert(approx(y3[0].contrib,500),'S3 windfall in contrib'); console.assert(approx(y3[0].end,500),'S3 end=windfall');
-      const p4={ ...p1, mode:'real', inflationMin:0, inflationMax:0, roiMin:0, roiMax:0, blackSwans:[] };
-      const y4=simulateYearly(p4); console.assert(approx(y4[0].end,y1[0].end),'R1 real==simple when ranges collapse');
-      const p5={ ...p2, mode:'real', inflationMin:0, inflationMax:0, roiMin:0, roiMax:0, blackSwans:[{year:2025,type:'Custom',infPlus:0,roiMinus:0,expPlus:20}] };
-      const y5=simulateYearly(p5); console.assert(approx(y5[0].withdraw,120*12),'R2 20% expense shock');
-      console.log('%cSelf-tests passed','color:green');
-    }catch(e){ console.warn('Self-tests issue', e); }
-  })();
-})();
-</script>
-</body>
-</html>
+  .bs-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px}
+  .bs-row>div{font-size:12px;color:var(--ink-3)}
+  .bs-actions{display:flex;gap:8px;
